@@ -1,4 +1,41 @@
 
 body{
     margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.2em;
+    user-select: none;
+}
+.menu-container {
+    position: absolute;
+    left: 20px;
+    display: flex;
+    background-color: grey;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 20px;
+    flex-direction: column;
+    gap: 5px;
+}
+.menu-item {
+    background-color: rgb(200, 200, 202);
+    padding: 0 20px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 180px;
+}
+.menu-item:hover {
+    background-color: rgb(239, 239, 239);
+    cursor: pointer;
+}
+input {
+    max-width: 50px;
+}
+.property {
+    display: flex;
+    justify-content: space-between;
+}
+.highlight {
+    background-color: rgb(239, 239, 239);
 }
