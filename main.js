@@ -1,10 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
 import { DragControls } from 'three/addons/controls/DragControls.js';
 
 const scene = new THREE.Scene(); 
-
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); 
 let currentSelection = null;
 const renderer = new THREE.WebGLRenderer( { antialias : true } ); 
@@ -13,10 +11,9 @@ renderer.setSize( window.innerWidth,
 window.innerHeight
 );
 
-const raycaster = new THREE.Raycaster();
-const elements = [];
 document.body.appendChild(renderer.domElement); 
 
+const elements = [];
 var cubeGeometry = new THREE.BoxGeometry(12,12,12); 
 var cylinderGeometry = new THREE.CylinderGeometry(10,10,10);
 var cubeMaterial = new THREE.MeshPhongMaterial({color: 0x00ff00}); 
@@ -73,12 +70,10 @@ dControls.addEventListener("hoveron", (event) => {
     event.object.material.wireframe = true;
     clearCurrentInformation();
     displayObjectInformation(event.object);
-    highlightSelectedObject(event.object);
 });
 
 dControls.addEventListener("hoveroff", (event) => {
     event.object.material.wireframe = false;
-    removeHighligh(event.object);
 });
 
 dControls.addEventListener("drag", (event) => {
@@ -174,4 +169,3 @@ function displayObjectInformation(object) {
         });
     }
 }
-// window.addEventListener('click', onClick);
