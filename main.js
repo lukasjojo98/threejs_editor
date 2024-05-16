@@ -1,9 +1,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DragControls } from 'three/addons/controls/DragControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
 
 const scene = new THREE.Scene(); 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); 
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const loader = new GLTFLoader();
 let currentSelection = null;
 const renderer = new THREE.WebGLRenderer( { antialias : true } ); 
 renderer.domElement.id = 'threeCanvas';
@@ -12,7 +15,7 @@ window.innerHeight
 );
 
 document.body.appendChild(renderer.domElement); 
-
+document.getElementById("file_import").addEventListener("change", importFile, false);
 const elements = [];
 var cubeGeometry = new THREE.BoxGeometry(12,12,12); 
 var cylinderGeometry = new THREE.CylinderGeometry(10,10,10);
@@ -64,24 +67,24 @@ const render = function () {
     renderer.render(scene, camera); 
 }; 
 
-const dControls = new DragControls([cube, cylinder], camera, renderer.domElement);
+const dControls = new DragControls(elements, camera, renderer.domElement);
 dControls.addEventListener("hoveron", (event) => {
     currentSelection = event.object;
     event.object.material.wireframe = true;
     clearCurrentInformation();
     displayObjectInformation(event.object);
-    document.getElementById(event.object.id).classList.add("highlight");
-
+    document.getElementById(event.object.uuid).classList.add("highlight");
 });
 
 dControls.addEventListener("hoveroff", (event) => {
     event.object.material.wireframe = false;
+    document.getElementById(event.object.uuid).classList.remove("highlight");
 });
 
 dControls.addEventListener("drag", (event) => {
     clearCurrentInformation();
     displayObjectInformation(event.object);
-    document.getElementById(event.object.id).classList.add("highlight");
+    document.getElementById(event.object.uuid).classList.add("highlight");
 });
 
 dControls.addEventListener("dragstart", (event) => {
@@ -91,7 +94,7 @@ dControls.addEventListener("dragstart", (event) => {
 
 dControls.addEventListener("dragend", (event) => {
     orbitControls.enabled = true;
-    document.getElementById(event.object.id).classList.remove("highlight");
+    document.getElementById(event.object.uuid).classList.remove("highlight");
 });
 
 render();
@@ -102,9 +105,39 @@ function initMenu() {
         const menuItem = document.createElement("div");
         menuItem.classList.add("menu-item");
         menuItem.innerHTML = elements[i].name;
-        menuItem.id = elements[i].id;
+        menuItem.id = elements[i].uuid;
         menuContainer.appendChild(menuItem);
     }
+}
+
+function importFile(event) {
+    const file = event.target.files[0];
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const contents = e.target.result;
+        const loader = new GLTFLoader();
+        loader.parse(contents, '', function(gltf) {
+            const model = gltf.scene;
+            model.traverse((child) => {
+                if (child.isMesh) {
+                    var material = new THREE.MeshPhongMaterial({color: 0x00ff00});
+                    child.material = material;
+                }
+            });
+            model.scale.set(15,15,15);
+            model.position.set(10,20,30);
+            elements.push(model);
+            clearCurrentInformation();
+            scene.add(model);
+        }, function(error) {
+            console.error('Error loading model:', error);
+        });
+    };
+    reader.readAsArrayBuffer(file);
 }
 
 function clearCurrentInformation() {
