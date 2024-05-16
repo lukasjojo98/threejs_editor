@@ -70,6 +70,8 @@ dControls.addEventListener("hoveron", (event) => {
     event.object.material.wireframe = true;
     clearCurrentInformation();
     displayObjectInformation(event.object);
+    document.getElementById(event.object.id).classList.add("highlight");
+
 });
 
 dControls.addEventListener("hoveroff", (event) => {
@@ -79,6 +81,7 @@ dControls.addEventListener("hoveroff", (event) => {
 dControls.addEventListener("drag", (event) => {
     clearCurrentInformation();
     displayObjectInformation(event.object);
+    document.getElementById(event.object.id).classList.add("highlight");
 });
 
 dControls.addEventListener("dragstart", (event) => {
@@ -88,19 +91,22 @@ dControls.addEventListener("dragstart", (event) => {
 
 dControls.addEventListener("dragend", (event) => {
     orbitControls.enabled = true;
+    document.getElementById(event.object.id).classList.remove("highlight");
 });
 
 render();
 
 function initMenu() {
     const menuContainer = document.querySelector(".menu-container");
-    for(var i = 0; i < elements.length; i++){
+    for(let i = 0; i < elements.length; i++){
         const menuItem = document.createElement("div");
         menuItem.classList.add("menu-item");
         menuItem.innerHTML = elements[i].name;
+        menuItem.id = elements[i].id;
         menuContainer.appendChild(menuItem);
     }
 }
+
 function clearCurrentInformation() {
     const menuContainer = document.querySelector(".menu-container");
     menuContainer.innerHTML = "";
@@ -132,40 +138,23 @@ function updateObjectFromInput(inputField) {
 
 function displayObjectInformation(object) {
     const menuContainer = document.querySelector(".menu-container");
-    let menuItem = document.createElement("div");
-    menuItem.classList.add("menu-item","property");
-    menuItem.innerHTML = "<label>Location X:</label><input type='text' value='" + object.position.x + "' name='location-x'>";
-    menuContainer.appendChild(menuItem);
+    const properties = ["x", "y", "z"];
+    properties.forEach((prop) => {
+        let menuItem = document.createElement("div");
+        menuItem.classList.add("menu-item", "property");
+        menuItem.innerHTML = `<label>Location ${prop.toUpperCase()}:</label><input type='text' value='${object.position[prop]}' name='location-${prop}'>`;
+        menuContainer.appendChild(menuItem);
 
-    menuItem = document.createElement("div");
-    menuItem.classList.add("menu-item","property");
-    menuItem.innerHTML = "<label>Location Y:</label><input type='text' value='" + object.position.y + "' name='location-y'>";
-    menuContainer.appendChild(menuItem);
+        menuItem = document.createElement("div");
+        menuItem.classList.add("menu-item", "property");
+        menuItem.innerHTML = `<label>Scale ${prop.toUpperCase()}:</label><input type='text' value='${object.scale[prop]}' name='scale-${prop}'>`;
+        menuContainer.appendChild(menuItem);
+    });
 
-    menuItem = document.createElement("div");
-    menuItem.classList.add("menu-item","property");
-    menuItem.innerHTML = "<label>Location Z:</label><input type='text' value='" + object.position.z + "' name='location-z'>";
-    menuContainer.appendChild(menuItem);
-
-    menuItem = document.createElement("div");
-    menuItem.classList.add("menu-item","property");
-    menuItem.innerHTML = "<label>Scale X:</label><input type='text' value='" + object.scale.x + "' name='scale-x'>";
-    menuContainer.appendChild(menuItem);
-
-    menuItem = document.createElement("div");
-    menuItem.classList.add("menu-item","property");
-    menuItem.innerHTML = "<label>Scale Y:</label><input type='text' value='" + object.scale.y + "' name='scale-y'>";
-    menuContainer.appendChild(menuItem);
-
-    menuItem = document.createElement("div");
-    menuItem.classList.add("menu-item","property");
-    menuItem.innerHTML = "<label>Scale Z:</label><input type='text' value='" + object.scale.z + "' name='scale-z'>";
-    menuContainer.appendChild(menuItem);
-
-    const input = document.querySelectorAll("input");
-    for(var i = 0; i < input.length; i++){
-        input[i].addEventListener("keyup", (event) => {
+    const inputs = document.querySelectorAll("input");
+    inputs.forEach((input) => {
+        input.addEventListener("keyup", (event) => {
             updateObjectFromInput(event.target);
         });
-    }
+    });
 }
