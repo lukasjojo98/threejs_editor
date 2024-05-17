@@ -18,9 +18,11 @@
   <div class="menu-container">
   </div>
   <div class="file-container">
-    <div class="file-item">Import file (+)</div>
-    <div class="file-item"><input type="file" id="file_import"></div>
+    <div class="file-item" id="import-button">Import file (+)</div>
+    <div class="file-item" id="export-button">Export scene (-)</div>
   </div>
 </body>
+<a href="" id="download-element" style="display: none;"></a>
+<input type="file" id="file_import" style="display: none;" accept=".obj, .fbx, .glb">
 <script type="module" src="main.js"></script>
 </html>
