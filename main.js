@@ -5,7 +5,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
-const scene = new THREE.Scene(); 
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xDCDCDC); 
+addLighting();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 const loader = new GLTFLoader();
 let currentSelection = null;
@@ -37,14 +39,6 @@ addPrimitive("Cylinder", new THREE.MeshPhongMaterial({color: 0x0000ff}), {x: 10,
 
 initMenu();
 
-const pointLight = new THREE.AmbientLight(0xFFFFFF);
-
-pointLight.position.x = 10;
-pointLight.position.y = 50;
-pointLight.position.z = 130;
-
-scene.add( pointLight );
-
 var gridHelper = new THREE.GridHelper( 90, 9 );
 gridHelper.colorGrid = 0xE8E8E8;
 scene.add( gridHelper );
@@ -58,9 +52,6 @@ camera.position.set( 75, 75, 75 );
 camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 const orbitControls = new OrbitControls( camera, renderer.domElement ); 
-orbitControls.addEventListener('change', 
-function() { pointLight.position.copy(camera.position); } 
-);
 orbitControls.enableDamping = true;
 orbitControls.dampingFactor = 1.0;
 orbitControls.enableZoom = true;
@@ -218,4 +209,12 @@ function displayObjectInformation(object) {
             updateObjectFromInput(event.target);
         });
     });
+}
+
+function addLighting() {
+    const hmLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+    const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.5);
+    const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
+    directionalLight.position.set(0, 80, 0);
+    scene.add(ambientLight, directionalLight, hmLight);
 }
