@@ -204,8 +204,9 @@ function displayObjectInformation(object) {
         menuItem.classList.add("menu-item", "property");
         menuItem.innerHTML = `<label>Location ${prop.toUpperCase()}:</label><input type='text' value='${object.position[prop]}' name='location-${prop}'>`;
         menuContainer.appendChild(menuItem);
-
-        menuItem = document.createElement("div");
+    });
+    properties.forEach((prop) => {
+        let menuItem = document.createElement("div");
         menuItem.classList.add("menu-item", "property");
         menuItem.innerHTML = `<label>Scale ${prop.toUpperCase()}:</label><input type='text' value='${object.scale[prop]}' name='scale-${prop}'>`;
         menuContainer.appendChild(menuItem);
